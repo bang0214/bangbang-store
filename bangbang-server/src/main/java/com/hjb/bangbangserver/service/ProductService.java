@@ -1,12 +1,15 @@
 package com.hjb.bangbangserver.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.hjb.param.ProductHotParam;
 import com.hjb.param.ProductIdsParam;
+import com.hjb.pojo.Product;
+import com.hjb.to.OrderToProduct;
 import com.hjb.utils.R;
 
 import java.util.List;
 
-public interface ProductService {
+public interface ProductService extends IService<Product> {
     /**
      * 单类别名称 查询热门商品 至多7条数据
      * @param categoryName 类别名称
@@ -57,4 +60,17 @@ public interface ProductService {
      * @return
      */
     R ids(List<Integer> productIds);
+
+    /**
+     * 根据商品ids查询多个商品
+     * @param productIds
+     * @return
+     */
+    List<Product> cartList(List<Integer> productIds);
+
+    /**
+     * 修改库存和增加销售量
+     * @param orderToProducts
+     */
+    void subNumber(List<OrderToProduct> orderToProducts);
 }

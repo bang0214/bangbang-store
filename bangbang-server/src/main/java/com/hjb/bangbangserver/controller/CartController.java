@@ -1,6 +1,7 @@
 package com.hjb.bangbangserver.controller;
 
 import com.hjb.bangbangserver.service.CartService;
+import com.hjb.param.CartListParam;
 import com.hjb.param.CartSaveParam;
 import com.hjb.pojo.Cart;
 import com.hjb.utils.R;
@@ -33,37 +34,40 @@ public class CartController {
         return cartService.save(cartSaveParam);
     }
 
-//
-//    @PostMapping("list")
-//    public R list(@RequestBody @Validated CartListParam cartListParam,BindingResult bindingResult){
-//
-//        if (bindingResult.hasErrors()){
-//
-//            return R.fail("购物车数据查询失败!");
-//        }
-//
-//        return cartService.list(cartListParam.getUserId());
-//    }
-//
-//
-//    @PostMapping("update")
-//    public R update(@RequestBody Cart cart){
-//
-//        return cartService.update(cart);
-//    }
-//
-//
-//    @PostMapping("remove")
-//    public R remove(@RequestBody Cart cart){
-//
-//        return cartService.remove(cart);
-//    }
-//
-//
-//    @PostMapping("remove/check")
-//    public R removeCheck(@RequestBody Integer productId){
-//
-//        return cartService.check(productId);
-//    }
+
+    @PostMapping("list")
+    @ApiOperation(value = "查询购物车商品")
+    public R list(@RequestBody @Validated CartListParam cartListParam, BindingResult bindingResult){
+
+        if (bindingResult.hasErrors()){
+
+            return R.fail("购物车数据查询失败!");
+        }
+
+        return cartService.list(cartListParam.getUserId());
+    }
+
+
+    @PostMapping("update")
+    @ApiOperation(value = "更新购物车商品数量")
+    public R update(@RequestBody Cart cart){
+        return cartService.update(cart);
+    }
+
+
+    @PostMapping("remove")
+    @ApiOperation(value = "删除购物车商品")
+    public R remove(@RequestBody Cart cart){
+
+        return cartService.remove(cart);
+    }
+
+
+    @PostMapping("remove/check")
+    @ApiOperation(value = "检查购物车商品")
+    public R removeCheck(@RequestBody Integer productId){
+
+        return cartService.check(productId);
+    }
 
 }

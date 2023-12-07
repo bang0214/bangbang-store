@@ -2,6 +2,7 @@ package com.hjb.bangbangserver.controller;
 
 import com.hjb.bangbangserver.service.AddressService;
 import com.hjb.param.AddressListParam;
+import com.hjb.param.AddressParam;
 import com.hjb.param.AddressRemoveParam;
 import com.hjb.pojo.Address;
 import com.hjb.utils.R;
@@ -42,16 +43,22 @@ public class AddressController {
 
     /**
      * 新增地址
-     * @param address
+     * @param addressParam
      * @param result
      * @return
      */
     @PostMapping("save")
     @ApiOperation(value = "新增地址")
-    public R save(@RequestBody @Validated Address address, BindingResult result){
+
+    public R save(@RequestBody @Validated AddressParam addressParam, BindingResult result){
+
         if (result.hasErrors()){
+
             return R.fail("参数异常,保存失败!");
         }
+
+        Address address = addressParam.getAdd();
+        address.setUserId(addressParam.getUserId());
 
         return addressService.save(address);
     }

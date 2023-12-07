@@ -14,7 +14,7 @@ spring:
   resources:
     static-locations: classpath:/public/
   profiles:
-    active: cache
+    active: cache,mq
 mybatis-plus:
   mapper-locations: classpath:mappers/*.xml
   configuration:

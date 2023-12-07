@@ -31,7 +31,7 @@ public class ProductCartController {
     private ProductService productService;
 
     @PostMapping("cart/detail")
-    @ApiOperation(value = "根据商品id获得商品信息")
+    @ApiOperation(value = "根据商品id获得单个商品信息(用于添加购物车商品)")
     public Product cdetail(@RequestBody  @Validated ProductIdParam productIdParam,
                            BindingResult result){
 
@@ -43,14 +43,15 @@ public class ProductCartController {
         return  product;
     }
 
-//    @PostMapping("cart/list")
-//    public List<Product> cartList(@RequestBody @Validated ProductCollectParam productCollectParam,
-//                                  BindingResult result){
-//
-//        if (result.hasErrors()){
-//            return new ArrayList<Product>();
-//        }
-//
-//        return productService.cartList(productCollectParam.getProductIds());
-//    }
+    @PostMapping("cart/list")
+    @ApiOperation(value = "根据多商品id获得多个商品信息(用于查询购物车商品)")
+    public List<Product> cartList(@RequestBody @Validated ProductCollectParam productCollectParam,
+                                  BindingResult result){
+
+        if (result.hasErrors()){
+            return new ArrayList<Product>();
+        }
+
+        return productService.cartList(productCollectParam.getProductIds());
+    }
 }
