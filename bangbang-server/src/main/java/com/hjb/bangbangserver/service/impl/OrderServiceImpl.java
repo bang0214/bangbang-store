@@ -3,13 +3,16 @@ package com.hjb.bangbangserver.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hjb.bangbangserver.mapper.OrderMapper;
+import com.hjb.bangbangserver.mapper.UserMapper;
 import com.hjb.bangbangserver.service.OrderService;
 import com.hjb.bangbangserver.service.ProductService;
+import com.hjb.bangbangserver.service.UserService;
 import com.hjb.param.OrderParam;
 import com.hjb.param.PageParam;
 import com.hjb.param.ProductCollectParam;
 import com.hjb.pojo.Order;
 import com.hjb.pojo.Product;
+import com.hjb.pojo.User;
 import com.hjb.to.OrderToProduct;
 import com.hjb.utils.R;
 import com.hjb.vo.CartVo;
@@ -18,9 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +44,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private JavaMailSender javaMailSender;
+
+    @Autowired
+    private UserMapper userMapper;
+
     /**
      * 进行订单数据保存业务
      *    1. 将购物车数据转成订单数据
      *    2. 进行订单数据的批量插入
      *    3. 商品库存修改消息
      *    4. 发送购物车库存修改消息
+     *    5. 发送邮件
      * @param orderParam
      * @return
      */
@@ -90,7 +105,41 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         rabbitTemplate.convertAndSend("topic.ex","clear.cart",cartIds);
         //发送商品服务消息
         rabbitTemplate.convertAndSend("topic.ex","sub.number",orderToProducts);
-        return R.ok("订单保存成功!");
+
+//        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("user_id",userId);
+        User user = userMapper.selectById(userId);
+        String userEmailnumber = user.getUserEmailnumber();
+
+        R result = list(userId);
+        List<List<OrderVo>> data = (List<List<OrderVo>>) result.getData();
+
+
+        // 创建一个邮件消息
+        MimeMessage message = javaMailSender.createMimeMessage();
+
+        // 创建 MimeMessageHelper
+        MimeMessageHelper helper = null;
+        try {
+            helper = new MimeMessageHelper(message, false);
+            // 发件人邮箱和名称
+            helper.setFrom("1181696482@qq.com", "bangbangstore-admin");
+            // 收件人邮箱
+            helper.setTo(userEmailnumber);
+            // 邮件标题
+            helper.setSubject("您的订单已确认");
+            // 邮件正文
+            helper.setText("本次订单号为 "+orderId+" ,订单详情可在商城页面查看，感谢您的支持！");
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
+        // 发送
+        javaMailSender.send(message);
+
+        return R.ok("订单保存成功，已发送邮件确认!");
     }
 
     /**

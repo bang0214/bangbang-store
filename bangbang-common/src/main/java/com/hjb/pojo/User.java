@@ -35,5 +35,5 @@ public class User implements Serializable {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotBlank
-    private String userPhonenumber;
+    private String userEmailnumber;
 }
