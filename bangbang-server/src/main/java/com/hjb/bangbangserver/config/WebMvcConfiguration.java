@@ -57,10 +57,23 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      */
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/admin/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/public/**").addResourceLocations("classpath:/public/");
         registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
+    @Override
+    protected void addInterceptors(InterceptorRegistry registry) {
+        //拦截后台管理模块的路径  排除登录和资源路径
+        registry.addInterceptor(new LoginProtectInterceptor()).addPathPatterns("/admin/**")
+                .excludePathPatterns("/admin/","/admin/index.html","/admin/index",
+                        "/admin/user/login", "/admin/user/logout","admin/static/**",
+                        "/admin/captcha","/admin/api/**", "/admin/css/**", "/admin/images/**",
+                        "/admin/js/**", "/admin/js/**/**", "/admin/lib/**"
+                );
+
+
+    }
 
 }

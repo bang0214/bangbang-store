@@ -16,6 +16,8 @@ import com.hjb.utils.MD5Util;
 import com.hjb.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -139,6 +141,7 @@ public class UserServiceImpl implements UserService {
      * @param pageParam
      * @return
      */
+    @Cacheable(value = "list.user", key = "#pageParam.currentPage+'-'+#pageParam.pageSize")
     @Override
     public R listPage(PageParam pageParam) {
 
@@ -159,6 +162,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
+    @CacheEvict(value = "list.user",allEntries = true)
     public R remove(Integer userId) {
 
         int i = userMapper.deleteById(userId);
@@ -179,6 +183,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
+    @CacheEvict(value = "list.user",allEntries = true)
     public R update(User user) {
 
         //判断密码是否是原来的!
@@ -207,6 +212,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
+    @CacheEvict(value = "list.user",allEntries = true)
     public R save(User user) {
         //1.检查账号是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();

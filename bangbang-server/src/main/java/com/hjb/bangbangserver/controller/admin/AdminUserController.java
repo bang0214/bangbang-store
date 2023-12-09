@@ -22,14 +22,14 @@ import javax.servlet.http.HttpSession;
  */
 @RestController
 @RequestMapping("/admin")
-@Api(tags = "后台管理用户相关接口")
+@Api(tags = "后台用户相关接口")
 public class AdminUserController {
 
     @Autowired
     private AdminUserService adminUserService;
 
     @PostMapping("/user/login")
-    @ApiOperation(value = "后台管理用户登录")
+    @ApiOperation(value = "后台用户登录")
     public R login(@Validated AdminUserParam adminUserParam, BindingResult result, HttpSession session){
         if (result.hasErrors()){
             return R.fail("核心参数为null,登录失败!");
@@ -54,7 +54,7 @@ public class AdminUserController {
     }
 
     @GetMapping("user/logout")
-    @ApiOperation(value = "后台管理用户登出")
+    @ApiOperation(value = "后台用户登出")
     public R logout(HttpSession session){
         //清空session即可
         session.invalidate();

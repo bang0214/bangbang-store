@@ -23,7 +23,7 @@ public class LoginProtectInterceptor implements HandlerInterceptor {
             //放行, 他已经登录
             return true;
         }else{
-            response.sendRedirect(request.getContextPath()+"/index.html");
+            response.sendRedirect(request.getContextPath()+"/admin/index.html");
             return false;
         }
         // false 拦截  | true 放行

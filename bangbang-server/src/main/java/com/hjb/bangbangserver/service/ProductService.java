@@ -1,8 +1,10 @@
 package com.hjb.bangbangserver.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.hjb.param.PageParam;
 import com.hjb.param.ProductHotParam;
 import com.hjb.param.ProductIdsParam;
+import com.hjb.param.ProductSaveParam;
 import com.hjb.pojo.Product;
 import com.hjb.to.OrderToProduct;
 import com.hjb.utils.R;
@@ -73,4 +75,39 @@ public interface ProductService extends IService<Product> {
      * @param orderToProducts
      */
     void subNumber(List<OrderToProduct> orderToProducts);
+
+    /**
+     * 类别对应的商品数量查询
+     * @param categoryId
+     * @return
+     */
+    public Long adminCount(Integer categoryId);
+
+    /**
+     * 管理端分页查询商品
+     * @param pageParam
+     * @return
+     */
+    R pageList(PageParam pageParam);
+
+    /**
+     * 商品保存业务
+     * @param productSaveParam
+     * @return
+     */
+    R adminSave(ProductSaveParam productSaveParam);
+
+    /**
+     * 商品数据更新
+     * @param product
+     * @return
+     */
+    R adminUpdate(Product product);
+
+    /**
+     * 商品删除业务
+     * @param productId
+     * @return
+     */
+    R adminRemove(Integer productId);
 }

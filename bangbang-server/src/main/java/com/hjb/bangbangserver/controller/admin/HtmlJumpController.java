@@ -30,7 +30,7 @@ public class HtmlJumpController {
      *  设计欢迎页面跳转controller
      * @return login 登录页面
      */
-    @GetMapping({"/","index.html","index"})
+    @GetMapping({"","index.html","index"})
     @ApiOperation("跳转登录页面")
     public String  welcome(){
         log.info("HtmlJumpController.welcome 跳转登录页面!");
@@ -43,6 +43,7 @@ public class HtmlJumpController {
      * @return
      */
     @GetMapping("/home")
+    @ApiOperation("跳转index页面")
     public String home(){
         log.info("HtmlJumpController.home登录成功,跳转程序首页!index页面!");
         return "index";
@@ -52,6 +53,7 @@ public class HtmlJumpController {
      * 跳转用户管理页面
      */
     @GetMapping("/user")
+    @ApiOperation("跳转登录页面")
     public String user(){
         log.info("HtmlJumpController.user,跳转用户管理!user页面!");
         return "user/user";
@@ -128,10 +130,10 @@ public class HtmlJumpController {
      * 商品保存页面跳转
      * @return
      */
-//    @GetMapping("/product/save/html")
-//    public String productSaveHtml(Model model){
-//        log.info("HtmlJumpController.productSaveHtml业务结束，结果:{}");
-//
+    @GetMapping("/product/save/html")
+    public String productSaveHtml(Model model){
+        log.info("HtmlJumpController.productSaveHtml业务结束，结果:{}");
+
 //        //查询类别列表,存入共享域
 //        R r = categoryClient.list();
 //        List<LinkedHashMap> data = (List<LinkedHashMap>) r.getData(); // [linkhashMap]
@@ -148,16 +150,16 @@ public class HtmlJumpController {
 //
 //
 //        model.addAttribute("clist",categoryList);
-//        return "product/add";
-//    }
+        return "product/add";
+    }
 
     /**
      * 商品保存页面跳转
      * @return
      */
-//    @GetMapping("/product/update/html")
-//    public String productUpdateHtml(Model model){
-//        log.info("HtmlJumpController.productUpdateHtml业务结束，结果:{}");
+    @GetMapping("/product/update/html")
+    public String productUpdateHtml(Model model){
+        log.info("HtmlJumpController.productUpdateHtml业务结束，结果:{}");
 //
 //        //查询类别列表,存入共享域
 //        //查询类别列表,存入共享域
@@ -175,6 +177,6 @@ public class HtmlJumpController {
 //        }
 //
 //        model.addAttribute("clist",categoryList);
-//        return "product/edit";
-//    }
+        return "product/edit";
+    }
 }

@@ -10,8 +10,10 @@ import com.hjb.bangbangserver.mapper.ProductMapper;
 import com.hjb.bangbangserver.service.CarouselService;
 import com.hjb.bangbangserver.service.CategoryService;
 import com.hjb.bangbangserver.service.ProductService;
+import com.hjb.param.PageParam;
 import com.hjb.param.ProductHotParam;
 import com.hjb.param.ProductIdsParam;
+import com.hjb.param.ProductSaveParam;
 import com.hjb.pojo.Category;
 import com.hjb.pojo.Picture;
 import com.hjb.pojo.Product;
@@ -19,9 +21,12 @@ import com.hjb.pojo.Product;
 import com.hjb.to.OrderToProduct;
 import com.hjb.utils.R;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -252,5 +257,83 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper,Product> imple
         //批量更新
         this.updateBatchById(productList);
         log.info("ProductServiceImpl.subNumber业务结束，结果:库存和销售量的修改完毕");
+    }
+
+
+    /**
+     * 类别对应的商品数量查询
+     * @param categoryId
+     * @return
+     */
+    @Override
+    public Long adminCount(Integer categoryId) {
+
+        QueryWrapper<Product> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("category_id",categoryId);
+
+        Long count = baseMapper.selectCount(queryWrapper);
+        log.info("ProductServiceImpl.adminCount业务结束，结果:{}",count);
+        return count;
+    }
+
+    /**
+     * 管理端分页查询商品
+     * @param pageParam
+     * @return
+     */
+    @Override
+    @Cacheable(value = "admin.list.product",key = "#pageParam.currentPage+'-'+#pageParam.pageSize")
+    public R pageList(PageParam pageParam) {
+
+        IPage<Product> page = new Page<>(pageParam.getCurrentPage(),pageParam.getPageSize());
+        page = productMapper.selectPage(page,null);
+
+        return R.ok("商品分页数据查询成功!",page.getRecords(),page.getTotal());
+    }
+
+    /**
+     * 商品保存业务
+     *    1. 商品数据保存
+     *    2. 商品的图片详情切割和保存
+     *    3. 搜索数据库的数据添加
+     *    4. 清空商品相关的缓存数据
+     * @param productSaveParam
+     * @return
+     */
+    @CacheEvict(value = "admin.list.product",allEntries = true)
+    @Override
+    public R adminSave(ProductSaveParam productSaveParam) {
+
+        Product product = new Product();
+        BeanUtils.copyProperties(productSaveParam,product);
+
+        int rows = productMapper.insert(product); //商品数据插入
+        log.info("ProductServiceImpl.adminSave业务结束，结果:{}",rows);
+
+        //商品图片获取 +
+        String pictures = productSaveParam.getPictures();
+
+        if (!StringUtils.isEmpty(pictures)){
+            //截取特殊字符串的时候
+            String[] urls = pictures.split("\\+");
+            for (String url : urls) {
+                Picture picture = new Picture();
+                picture.setProductId(product.getProductId());
+                picture.setProductPicture(url);
+                pictureMapper.insert(picture); //插入商品的图片
+            }
+        }
+
+        return R.ok("商品数据添加成功!");
+    }
+
+    @Override
+    public R adminUpdate(Product product) {
+        return null;
+    }
+
+    @Override
+    public R adminRemove(Integer productId) {
+        return null;
     }
 }
