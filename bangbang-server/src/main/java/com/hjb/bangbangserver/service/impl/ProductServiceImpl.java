@@ -7,9 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hjb.bangbangserver.mapper.PictureMapper;
 import com.hjb.bangbangserver.mapper.ProductMapper;
-import com.hjb.bangbangserver.service.CarouselService;
-import com.hjb.bangbangserver.service.CategoryService;
-import com.hjb.bangbangserver.service.ProductService;
+import com.hjb.bangbangserver.service.*;
 import com.hjb.param.PageParam;
 import com.hjb.param.ProductHotParam;
 import com.hjb.param.ProductIdsParam;
@@ -25,6 +23,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -48,6 +47,14 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper,Product> imple
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private CartService cartService;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private CollectService collectService;
     /**
      * 根据单类别名称查询热门商品
      * @param categoryName
@@ -282,7 +289,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper,Product> imple
      * @return
      */
     @Override
-    @Cacheable(value = "admin.list.product",key = "#pageParam.currentPage+'-'+#pageParam.pageSize")
+    @Cacheable(value = "list.product",key = "#pageParam.currentPage+'-'+#pageParam.pageSize")
     public R pageList(PageParam pageParam) {
 
         IPage<Product> page = new Page<>(pageParam.getCurrentPage(),pageParam.getPageSize());
@@ -300,7 +307,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper,Product> imple
      * @param productSaveParam
      * @return
      */
-    @CacheEvict(value = "admin.list.product",allEntries = true)
+    @CacheEvict(value = "list.product",allEntries = true)
     @Override
     public R adminSave(ProductSaveParam productSaveParam) {
 
@@ -327,13 +334,65 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper,Product> imple
         return R.ok("商品数据添加成功!");
     }
 
+    /**
+     * 管理端更新商品
+     * @param product
+     * @return
+     */
     @Override
+    @CacheEvict(value = "list.product",allEntries = true)
     public R adminUpdate(Product product) {
-        return null;
+
+        Product originProduct = productMapper.selectById(product);
+
+        if(product.getProductPicture()==""){
+            product.setProductPicture(originProduct.getProductPicture());
+        }
+
+        productMapper.updateById(product);
+        return R.ok("商品数据更新成功!");
     }
 
+    /**
+     * 商品删除业务
+     *   1.检查订单
+     *   2.删除购物车相关
+     *   3.删除商品
+     *   4.删除商品相关的图片
+     *   5.删除收藏
+     *   6.清空缓存
+     * @param productId
+     * @return
+     */
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "list.product",allEntries = true),
+                    @CacheEvict(value = "product", key = "#productId")
+            }
+    )
     @Override
     public R adminRemove(Integer productId) {
-        return null;
+
+
+        R r = orderService.check(productId);
+        if ("004".equals(r.getCode())){
+            log.info("ProductServiceImpl.adminRemove业务结束，结果:{}",r.getMsg());
+            return r;
+        }
+
+        //删除商品
+        productMapper.deleteById(productId);
+        //删除商品图片
+        QueryWrapper<Picture> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("product_id",productId);
+        pictureMapper.delete(queryWrapper);
+
+        //删除购物车中和本商品有关的!
+        cartService.adminRemove(productId);
+
+        //删除收藏中和本商品有关的!
+        collectService.adminRemove(productId);
+
+        return R.ok("商品删除成功!");
     }
 }

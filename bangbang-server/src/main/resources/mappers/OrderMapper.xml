@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjb.bangbangserver.mapper.OrderMapper">
+
+     <select id="selectOrder" resultType="com.hjb.vo.OrderVo">
+         SELECT order_id, user_id, order_time,product_id,product_price,
+                order_time,product_num
+         FROM orders
+         LIMIT #{offset},#{pageSize};
+     </select>
+
+
+</mapper>

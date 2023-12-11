@@ -24,4 +24,11 @@ public interface CollectService {
      * @return
      */
     R remove(Collect collect);
+
+    /**
+     * 管理端根据商品id删除收藏
+     * @param productId
+     * @return
+     */
+    R adminRemove(Integer productId);
 }

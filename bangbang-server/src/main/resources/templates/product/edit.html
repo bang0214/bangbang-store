@@ -25,14 +25,14 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label required">商品名</label>
+        <label class="layui-form-label">商品名</label>
         <div class="layui-input-block">
             <input id="productName"  type="text" name="productName" lay-verify="required" lay-reqtext="商品名不能为空" placeholder="请输入商品名!" value="" class="layui-input">
             <tip>商品名</tip>
         </div>
     </div>
     <div class="layui-form-item" >
-        <label class="layui-form-label required">商品title</label>
+        <label class="layui-form-label">商品title</label>
         <div class="layui-input-block">
             <input id="productTitle" type="text" name="productTitle" placeholder="商品title!" value="" class="layui-input">
 
@@ -40,7 +40,7 @@
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label required">市场价格</label>
+        <label class="layui-form-label">市场价格</label>
         <div class="layui-input-block">
             <input id="productPrice" type="number" name="productPrice" lay-verify="required" lay-reqtext="" placeholder="市场价格" value="" class="layui-input">
         </div>
@@ -49,7 +49,7 @@
     <input type="hidden" id="productPicture" name="productPicture">
 
     <div class="layui-form-item">
-        <label class="layui-form-label required">商城价格</label>
+        <label class="layui-form-label">商城价格</label>
         <div class="layui-input-block">
             <input id="productSellingPrice" type="number" name="productSellingPrice" lay-verify="required" lay-reqtext="" placeholder="商城价格" value="" class="layui-input">
         </div>
@@ -68,21 +68,35 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label required">商品库存</label>
+        <label class="layui-form-label">商品库存</label>
         <div class="layui-input-block">
             <input id="productNum" type="number" name="productNum" lay-verify="required" lay-reqtext="" placeholder="商品库存" value="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label required">商品销售量</label>
+        <label class="layui-form-label">商品销售量</label>
         <div class="layui-input-block">
             <input id="productSales" type="number" name="productSales" placeholder="商品销售量" value="" class="layui-input">
         </div>
     </div>
 
+    <div class="layui-form-item">
+        <label class="layui-form-label">商品图片</label>
+        <button type="button" class="layui-btn" id="test1">
+            <i class="layui-icon">&#xe67c;</i>上传图片
+            <!-- 保存,用于后期保存提交的图片地址 -->
+            <input id="hpp" type="hidden" name="productPicture">
+        </button>
+        <br>
+        <br>
+        <label class="layui-form-label">图片显示</label>
+        <div>
+            <img  style="width: 120px;height: 100px" class="layui-form-label layui-upload-img" id="demo1">
+        </div>
+    </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label required">商品描述</label>
+        <label class="layui-form-label">商品描述</label>
         <div class="layui-input-block">
             <input id="productIntro" type="text" name="productIntro" placeholder="商品描述" value="" class="layui-input">
         </div>

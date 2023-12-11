@@ -9,6 +9,7 @@ import com.hjb.param.CartSaveParam;
 import com.hjb.param.ProductCollectParam;
 import com.hjb.param.ProductIdParam;
 import com.hjb.pojo.Cart;
+import com.hjb.pojo.Collect;
 import com.hjb.pojo.Product;
 import com.hjb.utils.R;
 import com.hjb.vo.CartVo;
@@ -210,5 +211,20 @@ public class CartServiceImpl implements CartService {
         }
 
         return R.ok("购物车无商品引用!");
+    }
+
+    /**
+     * 管理端根据商品id删除购物车项
+     * @param productId
+     * @return
+     */
+    @Override
+    public R adminRemove(Integer productId) {
+        QueryWrapper<Cart> queryWrapper  = new QueryWrapper<>();
+        queryWrapper.eq("product_id",productId);
+
+        int rows = cartMapper.delete(queryWrapper);
+        log.info("CartServiceImpl.adminRemove业务结束，结果:{}",rows);
+        return R.ok("购物车商品删除成功!");
     }
 }

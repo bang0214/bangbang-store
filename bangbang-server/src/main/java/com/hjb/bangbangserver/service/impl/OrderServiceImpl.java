@@ -3,6 +3,7 @@ package com.hjb.bangbangserver.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hjb.bangbangserver.mapper.OrderMapper;
+import com.hjb.bangbangserver.mapper.ProductMapper;
 import com.hjb.bangbangserver.mapper.UserMapper;
 import com.hjb.bangbangserver.service.OrderService;
 import com.hjb.bangbangserver.service.ProductService;
@@ -15,6 +16,7 @@ import com.hjb.pojo.Product;
 import com.hjb.pojo.User;
 import com.hjb.to.OrderToProduct;
 import com.hjb.utils.R;
+import com.hjb.vo.AdminOrderVo;
 import com.hjb.vo.CartVo;
 import com.hjb.vo.OrderVo;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +51,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
+    private ProductMapper productMapper;
 
     /**
      * 进行订单数据保存业务
@@ -192,13 +200,42 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return r;
     }
 
+    /**
+     * 检查订单中是否有商品引用
+     * @param productId
+     * @return
+     */
     @Override
     public R check(Integer productId) {
-        return null;
+
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("product_id",productId);
+
+        Long count = baseMapper.selectCount(queryWrapper);
+
+        if (count >0){
+            return R.fail("订单:"+count+"项引用该商品,不能删除!");
+        }
+
+        return R.ok("无订单引用,可以删除");
     }
 
+    /**
+     * 管理端查询订单
+     * @param pageParam
+     * @return
+     */
     @Override
     public R adminList(PageParam pageParam) {
-        return null;
+        //分页参数计算完毕
+        int offset = (pageParam.getCurrentPage()-1)*pageParam.getPageSize();
+        int pageSize = pageParam.getPageSize();
+
+        List<OrderVo>  orderVoList = orderMapper.selectOrder(offset,pageSize);
+        for (OrderVo orderVo : orderVoList) {
+            Product product = productMapper.selectById(orderVo.getProductId());
+            orderVo.setProductName(product.getProductName());
+        }
+        return R.ok("订单数据查询成功!",orderVoList);
     }
 }

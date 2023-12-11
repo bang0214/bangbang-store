@@ -88,4 +88,20 @@ public class CollectServiceImpl implements CollectService {
         log.info("CollectServiceImpl.remove业务结束，结果:{}",rows);
         return R.ok("收藏移除成功!");
     }
+
+    /**
+     * 根据商品id删除收藏
+     * @param productId
+     * @return
+     */
+    @Override
+    public R adminRemove(Integer productId) {
+
+        QueryWrapper<Collect> queryWrapper  = new QueryWrapper<>();
+        queryWrapper.eq("product_id",productId);
+
+        int rows = collectMapper.delete(queryWrapper);
+        log.info("CollectServiceImpl.adminRemove业务结束，结果:{}",rows);
+        return R.ok("收藏商品删除成功!");
+    }
 }

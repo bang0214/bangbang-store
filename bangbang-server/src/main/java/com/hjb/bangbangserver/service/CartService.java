@@ -47,4 +47,11 @@ public interface CartService {
      * @return
      */
     R check(Integer productId);
+
+    /**
+     * 管理端根据商品id删除购物车项
+     * @param productId
+     * @return
+     */
+    R adminRemove(Integer productId);
 }

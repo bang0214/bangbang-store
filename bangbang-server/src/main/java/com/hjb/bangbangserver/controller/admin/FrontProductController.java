@@ -61,17 +61,17 @@ public class FrontProductController {
         return productService.adminSave(productSaveParam);
     }
 
-//    @PostMapping("update")
-//    @ApiOperation(value = "更新商品")
-//    public R adminUpdate(Product product){
-//
-//        return productService.update(product);
-//    }
-//
-//    @PostMapping("remove")
-//    @ApiOperation(value = "删除商品")
-//    public R adminRemove(Integer productId){
-//
-//        return productService.remove(productId);
-//    }
+    @PostMapping("update")
+    @ApiOperation(value = "更新商品")
+    public R adminUpdate(Product product){
+
+        return productService.adminUpdate(product);
+    }
+
+    @PostMapping("remove")
+    @ApiOperation(value = "删除商品")
+    public R adminRemove(Integer productId){
+
+        return productService.adminRemove(productId);
+    }
 }

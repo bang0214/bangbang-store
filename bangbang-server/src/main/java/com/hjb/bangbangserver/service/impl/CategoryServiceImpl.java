@@ -89,7 +89,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return
      */
     @Override
-    @Cacheable(value = "admin.list.category",key = "#pageParam.currentPage+'-'+#pageParam.pageSize")
+    @Cacheable(value = "list.category",key = "#pageParam.currentPage+'-'+#pageParam.pageSize")
     public R pageList(PageParam pageParam) {
 
         IPage<Category> page = new Page<>(pageParam.getCurrentPage(),pageParam.getPageSize());
@@ -106,7 +106,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return
      */
     @Override
-    @CacheEvict(value = "admin.list.category", allEntries = true)
+    @CacheEvict(value = "list.category", allEntries = true)
     public R save(Category category) {
 
         QueryWrapper<Category> queryWrapper = new QueryWrapper<>();
@@ -131,7 +131,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return
      */
     @Override
-    @CacheEvict(value = "admin.list.category", allEntries = true)
+    @CacheEvict(value = "list.category", allEntries = true)
     public R remove(Integer categoryId) {
 
         Long aLong = productService.adminCount(categoryId);
@@ -151,7 +151,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return
      */
     @Override
-    @CacheEvict(value = "admin.list.category", allEntries = true)
+    @CacheEvict(value = "list.category", allEntries = true)
     public R update(Category category) {
 
         QueryWrapper<Category> queryWrapper = new QueryWrapper<>();
