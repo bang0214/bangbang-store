@@ -98,6 +98,7 @@ public class UserServiceImpl implements UserService {
      * @return 结果 001 004
      */
     @Override
+    @CacheEvict(value = "list.user",allEntries = true)
     public R register(User user) {
 
         //1.检查账号是否存在
